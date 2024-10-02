@@ -1,0 +1,140 @@
+RANDOM USEFUL COMMANDS:
+------------------------
+
+git log --oneline --decorate
+
+
+THINGS TO CHECK OUT:
+--------------------
+- Try out branching cases
+    -> c1 -> c2 -> c3 -> c4
+              |
+             c5 -> c6 -> c7
+
+- Git credential storage (realistically only need ssh auth)
+- https://git.github.io/Hacking-Git/
+- Didn't understand tracking branches
+
+
+GIT BASICS:
+----------
+
+2.4 Undoing things
+
+- Edit previous commit:     git commit --amend
+
+
+
+
+2.5 Working with Remotes
+
+git remove -v
+git fetch <remote>
+git remote show origin
+git remote rename <oldremote> <newremote>
+git remote remove <remote>
+
+
+
+
+2.6 Tagging
+- Can label specific points (commits)
+
+git tag
+git tag -l|--list "<regex>"
+
+Two type of tags:
+    - lightweight: like a branch that doesn't change. A pointer. Mostly temporary
+    - annotated: 
+        - Stored as full objects
+        - Checksummed, tagger name, email, etc
+
+
+git tag -a <tagname> -m "<tagmsg>"      : ANNOTATED TAGS
+git tag <tagname>                       : LIGHTWEIGHT TAGS
+
+git show <tagname>
+
+git tag -a v1.2 9fceb02                 : Tag previous commit with hash
+
+- `git push` doesn't share tags by default
+git push <remote> <tagname>
+git push <remote> --tags                : Pushes all tags (lightweight and annotated)
+
+git tag -d <tagname>                    : delete tag
+git push <remote> --delete <tagname>
+git checkout <tagname>
+
+
+
+
+
+
+2.7 Git Aliases
+
+git config --global alias.ci commit
+git config --global alias.unstage 'reset HEAD --'
+git config --global alias.last 'log -1 HEAD'    : Get log of latest commit
+git config --global alias.visual '!gitk'        : External command
+
+
+
+######################################################################################################################
+
+GIT BRANCHING
+-------------
+- Git branches are just pointers
+- HEAD: Pointer to the local branch you're on
+
+git branch <branch>
+git branch --all
+git checkout <branch>
+git checkout -b <branch>
+git branch -d <branch>
+
+git merge <branch> : Merge <branch> into current branch commit
+git mergetool
+
+
+
+3.3 Branch Management
+
+git branch -v
+git branch [--merged|--no-merged]: Shows what is merged|not merged in the *current* branch
+
+- Do not change branch name if others are using
+- To change master/main branch name: https://git-scm.com/book/en/v2/Git-Branching-Branch-Management#_changing_master
+
+git branch --move bad-branch-name corrected-branch-name     : Locally change branch name
+git push --set-upstream origin corrected-branch-name        : Push new branch name to remote server
+git push origin --delete bad-branch-name
+
+** DO THIS WITH CARE: CHANGING main/master BRANCH NAME**
+Local change:
+git branch --move master new-name
+
+git push --set-upstream origin new-name     : Move to remote
+git push origin --delete master
+
+
+
+3.4 Branching workflows
+
+Check out the last image it doesn't make sense
+
+
+3.5 Remote Branches
+
+- Read having multiple remotes from multiple remote servers
+- Can have multiple remotes pointing to different servers for a single local repo
+
+git push <remote> <branch>      : Pushes <branch> into remote server
+git push <remote> <localbranch>:<remotebranch>      : Pushes <localbranch> into the server under the name <remotebranch>
+
+
+# Getting a new remote branch and creating a branch in local repo
+git fetch origin -> fetches new branch serverfix
+git checkout -b serverfix origin/serverfix -> Creates new local branch based on local repo
+
+
+- Didn't understand tracking branches
