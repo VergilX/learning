@@ -138,3 +138,36 @@ git checkout -b serverfix origin/serverfix -> Creates new local branch based on 
 
 
 - Didn't understand tracking branches
+
+
+3.6
+
+Understood this, but read it again later. Or better, use it and see.
+
+
+######################################################################################################################
+
+GIT ON THE SERVER
+-----------------
+
+4.1 The Protocols
+
+Local protocol:
+- Store the files in a shared mounted filesystem which can be accessed by all devs
+- DO NOT USE! Too insecure
+
+git clone /srv/git/project.git | git clone file:///srv/git/project.git
+
+
+
+HTTP Protocols:
+    - Smart HTTP
+    - Dumb HTTP
+
+SSH
+Git protocol
+
+Verdict: The best one is Smart HTTP (it uses TLS too). Second comes SSH (but worse than Smart HTTP as code can't be viewed on SSH by random authors).
+
+
+Next: Get git on the server
