@@ -1,0 +1,3 @@
+go run main.go
+go run --work main.go : see temporary file used for compilation
+go build main.go  : Explicitely compile the code only
