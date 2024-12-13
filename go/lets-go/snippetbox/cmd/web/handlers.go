@@ -2,7 +2,9 @@ package main
 
 import (
     "fmt"
+    "html/template"
     "net/http"
+    "log"
     "strconv"
 )
 
@@ -10,7 +12,31 @@ import (
 func home(w http.ResponseWriter, r *http.Request) {
     w.Header().Add("Server", "Go")
 
-    w.Write([]byte("Hello from SnippetBox"))
+    // files slice (base template should be *first*)
+    files := []string{
+        "./ui/html/base.tmpl",
+        "./ui/html/pages/home.tmpl",
+        "./ui/html/partials/nav.tmpl",
+    }
+
+    // ts: Template set
+    // takes files slice
+    // ... is used to pass slice elements as args
+    ts, err := template.ParseFiles(files...)
+    if err != nil {
+        log.Print(err.Error())
+        http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+        return
+    }
+
+    // Add template to http body
+    // second arg: name of template ( {{define "base"}} )
+    // last arg: dynamic data (nil for now)
+    err = ts.ExecuteTemplate(w, "base", nil)
+    if err != nil {
+        log.Print(err.Error())
+        http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+    }
 }
 
 func snippetView(w http.ResponseWriter, r *http.Request) {
