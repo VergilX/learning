@@ -4,7 +4,6 @@ import (
     "fmt"
     "html/template"
     "net/http"
-    "log/slog"
     "strconv"
 )
 
@@ -24,8 +23,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
     // ... is used to pass slice elements as args
     ts, err := template.ParseFiles(files...)
     if err != nil {
-        app.logger.Error(err.Error(), slog.String("method", r.Method), slog.String("uri", r.URL.RequestURI()))
-        http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+        app.serverError(w, r, err)  // helpers.go
         return
     }
 
@@ -34,8 +32,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
     // last arg: dynamic data (nil for now)
     err = ts.ExecuteTemplate(w, "base", nil)
     if err != nil {
-        app.logger.Error(err.Error(), slog.String("method", r.Method), slog.String("uri", r.URL.RequestURI()))
-        http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+        app.serverError(w, r, err)  // helpers.go
     }
 }
 
