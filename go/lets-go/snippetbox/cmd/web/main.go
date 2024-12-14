@@ -2,8 +2,9 @@ package main
 
 import (
     "flag"
-    "log"
+    "log/slog"
     "net/http"
+    "os"
 )
 
 func main() {
@@ -14,6 +15,9 @@ func main() {
     // Right now addr has default value
     // Get the actual value, if present
     flag.Parse()
+    
+    // Structured logger
+    logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
     mux := http.NewServeMux()  // one to many (multiplexer by regex)
 
@@ -30,10 +34,11 @@ func main() {
     mux.HandleFunc("GET /snippet/create", snippetCreate)
     mux.HandleFunc("POST /snippet/create", snippetCreatePost)
 
-    log.Printf("starting server on %s", *addr)
+    logger.Info("starting server", slog.String("addr", *addr))
 
     err := http.ListenAndServe(*addr, mux)  // listens at port ("host:port")
     // if host not mentioned, goes an all network interfaces avaiable
 
-    log.Fatal(err)
+    logger.Error(err.Error())
+    os.Exit(1)
 }
