@@ -1,11 +1,20 @@
 package main
 
 import (
+    "flag"
     "log"
     "net/http"
 )
 
 func main() {
+    // command line flags
+    // flag function Args: 1-flagname; 2-defaultval; 3-desc
+    addr := flag.String("addr", ":4000", "HTTP port address")
+
+    // Right now addr has default value
+    // Get the actual value, if present
+    flag.Parse()
+
     mux := http.NewServeMux()  // one to many (multiplexer by regex)
 
     // Create a fileserver for static files
@@ -21,9 +30,9 @@ func main() {
     mux.HandleFunc("GET /snippet/create", snippetCreate)
     mux.HandleFunc("POST /snippet/create", snippetCreatePost)
 
-    log.Print("starting server on :4000")
+    log.Printf("starting server on %s", *addr)
 
-    err := http.ListenAndServe(":4000", mux)  // listens at port ("host:port")
+    err := http.ListenAndServe(*addr, mux)  // listens at port ("host:port")
     // if host not mentioned, goes an all network interfaces avaiable
 
     log.Fatal(err)
