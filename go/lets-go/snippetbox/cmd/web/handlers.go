@@ -4,12 +4,12 @@ import (
     "fmt"
     "html/template"
     "net/http"
-    "log"
+    "log/slog"
     "strconv"
 )
 
 
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
     w.Header().Add("Server", "Go")
 
     // files slice (base template should be *first*)
@@ -24,7 +24,7 @@ func home(w http.ResponseWriter, r *http.Request) {
     // ... is used to pass slice elements as args
     ts, err := template.ParseFiles(files...)
     if err != nil {
-        log.Print(err.Error())
+        app.logger.Error(err.Error(), slog.String("method", r.Method), slog.String("uri", r.URL.RequestURI()))
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
         return
     }
@@ -34,12 +34,12 @@ func home(w http.ResponseWriter, r *http.Request) {
     // last arg: dynamic data (nil for now)
     err = ts.ExecuteTemplate(w, "base", nil)
     if err != nil {
-        log.Print(err.Error())
+        app.logger.Error(err.Error(), slog.String("method", r.Method), slog.String("uri", r.URL.RequestURI()))
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
     }
 }
 
-func snippetView(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
     // Retrieve wildcard values r.PathValue()
     // and error checking strconv
     id, err := strconv.Atoi(r.PathValue("id"))  // voids non integers (Atoi)
@@ -61,11 +61,11 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
 
-func snippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte("Display a form for creating a new snippet..."))
 }
 
-func snippetCreatePost(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
     // Write http header
     w.WriteHeader(http.StatusCreated)
 

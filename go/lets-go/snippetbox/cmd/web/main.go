@@ -7,6 +7,11 @@ import (
     "os"
 )
 
+// all dependencies of app
+type application struct {
+    logger *slog.Logger
+}
+
 func main() {
     // command line flags
     // flag function Args: 1-flagname; 2-defaultval; 3-desc
@@ -19,6 +24,11 @@ func main() {
     // Structured logger
     logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
+    // application 'app' used for dependency injection
+    app := &application {
+        logger: logger,
+    }
+
     mux := http.NewServeMux()  // one to many (multiplexer by regex)
 
     // Create a fileserver for static files
@@ -29,10 +39,10 @@ func main() {
     // Arg taken is stripped of /static using http.StripPrefix
     mux.Handle("GET /static/", http.StripPrefix("/static", fileserver))
 
-    mux.HandleFunc("GET /{$}", home)  // Adds handle "/"-> func home()
-    mux.HandleFunc("GET /snippet/view/{id}", snippetView)
-    mux.HandleFunc("GET /snippet/create", snippetCreate)
-    mux.HandleFunc("POST /snippet/create", snippetCreatePost)
+    mux.HandleFunc("GET /{$}", app.home)  // Adds handle "/"-> func home()
+    mux.HandleFunc("GET /snippet/view/{id}", app.snippetView)
+    mux.HandleFunc("GET /snippet/create", app.snippetCreate)
+    mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
 
     logger.Info("starting server", slog.String("addr", *addr))
 
