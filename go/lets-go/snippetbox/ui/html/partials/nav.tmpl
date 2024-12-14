@@ -1,9 +1,9 @@
 {{define "nav"}}
     <nav>
         <a href='/'>Home</a>
+        <!-- block is the default thingy displayed? -->
+        {{block "default-bar" .}}
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">free bitcoin</a>
+        {{end}}
     </nav>
-    <!-- block is the default thingy displayed? -->
-    {{block "default-bar" .}}
-        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> click here </a>
-    {{end}}
 {{end}}
