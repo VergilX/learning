@@ -2,7 +2,7 @@ package main
 
 import "net/http"
 
-func (app *application) routes() *http.Servemux {
+func (app *application) routes() *http.ServeMux {
     mux := http.NewServeMux()  // one to many (multiplexer by regex)
 
     // Create a fileserver for static files
