@@ -22,7 +22,7 @@ func main() {
     // command line flags
     // flag function Args: 1-flagname; 2-defaultval; 3-desc
     addr := flag.String("addr", ":4000", "HTTP port address")
-    dsn := flag.String("dsn", "web:@/snippetbox?parseTime=true", "MySQL data source name")  // cmd for DB DSN String (Data Source Name)
+    dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")  // cmd for DB DSN String (Data Source Name)
 
     // Right now cmd has default values
     // Get the actual value, if present
@@ -44,7 +44,7 @@ func main() {
     // application 'app' used for dependency injection
     app := &application {
         logger:     logger,
-        snippets:   &models.SnippetModel{db: DB},
+        snippets:   &models.SnippetModel{DB: db},
     }
 
     // retrieve routes from routes.go into servemux
