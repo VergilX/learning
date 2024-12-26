@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
+	// "html/template"
 	"net/http"
 	"strconv"
 
@@ -13,29 +13,39 @@ import (
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
 
-	// files slice (base template should be *first*)
-	files := []string{
-		"./ui/html/base.tmpl",
-		"./ui/html/pages/home.tmpl",
-		"./ui/html/partials/nav.tmpl",
-	}
+    snippets, err := app.snippets.Latest()
+    if err != nil {
+        app.serverError(w, r, err)
+        return
+    }
 
-	// ts: Template set
-	// takes files slice
-	// ... is used to pass slice elements as args
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err) // helpers.go
-		return
-	}
+    for _, snippet := range snippets {
+        fmt.Fprintf(w, "%+v\n", snippet)
+    }
 
-	// Add template to http body
-	// second arg: name of template ( {{define "base"}} )
-	// last arg: dynamic data (nil for now)
-	err = ts.ExecuteTemplate(w, "base", nil)
-	if err != nil {
-		app.serverError(w, r, err) // helpers.go
-	}
+	// // files slice (base template should be *first*)
+	// files := []string{
+	// 	"./ui/html/base.tmpl",
+	// 	"./ui/html/pages/home.tmpl",
+	// 	"./ui/html/partials/nav.tmpl",
+	// }
+	//
+	// // ts: Template set
+	// // takes files slice
+	// // ... is used to pass slice elements as args
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	app.serverError(w, r, err) // helpers.go
+	// 	return
+	// }
+	//
+	// // Add template to http body
+	// // second arg: name of template ( {{define "base"}} )
+	// // last arg: dynamic data (nil for now)
+	// err = ts.ExecuteTemplate(w, "base", nil)
+	// if err != nil {
+	// 	app.serverError(w, r, err) // helpers.go
+	// }
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {

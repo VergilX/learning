@@ -58,5 +58,38 @@ func (m *SnippetModel) Get(id int) (Snippet, error) {
 }
 
 func (m *SnippetModel) Latest() ([]Snippet, error) {
-    return nil, nil
+    stmt := `SELECT id, title, content, created, expires FROM snippets
+    WHERE expires > UTC_TIMESTAMP() ORDER BY id DESC LIMIT 10`
+
+    // Used Query function insted of QueryRow and returns a Resultset
+    rows, err := m.DB.Query(stmt)
+    if err != nil {
+        return nil, err
+    }
+
+    // Have to close sql.Rows resultset *before* Latest() returns
+    // also, should be done after checking error for Query() func
+    // else will get panic for trying to close nil resultset
+    defer rows.Close()    // VERY IMPORTANT LINE
+
+    // empty slice for result
+    var snippets []Snippet
+
+    for rows.Next() {
+        // Same as Get()
+        var s Snippet
+
+        err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
+        if err != nil {
+            return nil, err
+        }
+        snippets = append(snippets, s)
+    }
+
+    // Retrieve any error during loop
+    if err = rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return snippets, nil
 }
