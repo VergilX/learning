@@ -2,7 +2,9 @@ package main
 
 import "net/http"
 
-func (app *application) routes() *http.ServeMux {
+// update to return Handler. Doesn't break the code as Handler
+// also satisfies interface of ListenAndServe() in main.go
+func (app *application) routes() http.Handler {
     mux := http.NewServeMux()  // one to many (multiplexer by regex)
 
     // Create a fileserver for static files
@@ -19,5 +21,5 @@ func (app *application) routes() *http.ServeMux {
     mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
 
     // returns the servemux
-    return mux
+    return commonHeaders(mux)
 }
