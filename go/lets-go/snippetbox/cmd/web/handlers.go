@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -13,39 +12,16 @@ import (
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
 
-    snippets, err := app.snippets.Latest()
-    if err != nil {
-        app.serverError(w, r, err)
-        return
-    }
-
-	// files slice (base template should be *first*)
-	files := []string{
-		"./ui/html/base.tmpl",
-		"./ui/html/partials/nav.tmpl",
-		"./ui/html/pages/home.tmpl",
-	}
-
-	// ts: Template set
-	// takes files slice
-	// ... is used to pass slice elements as args
-	ts, err := template.ParseFiles(files...)
+	snippets, err := app.snippets.Latest()
 	if err != nil {
-		app.serverError(w, r, err) // helpers.go
+		app.serverError(w, r, err)
 		return
 	}
 
-    data := templateData{
-        Snippets: snippets,
-    }
-
-	// Add template to http body
-	// second arg: name of template ( {{define "base"}} )
-	// last arg: dynamic data (nil for now)
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, r, err) // helpers.go
-	}
+	// Using new render method (template cache)
+	app.render(w, r, http.StatusOK, "home.tmpl", templateData{
+		Snippets: snippets,
+	})
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
@@ -70,30 +46,10 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    files := []string{
-        "./ui/html/base.tmpl",
-        "./ui/html/partials/nav.tmpl",
-        "./ui/html/pages/view.tmpl",
-    }
-
-
-    ts, err := template.ParseFiles(files...)
-    if err != nil {
-        app.serverError(w, r, err)
-        return
-    }
-
-    // wrap data in a single struct. Defined in templates.go
-    data := templateData{
-        Snippet: snippet,
-    }
-
-    // pass snippet data during execution of template (models.Snippet)
-    // wrapped by templateData
-    err = ts.ExecuteTemplate(w, "base", data)
-    if err != nil {
-        app.serverError(w, r, err)
-    }
+	// render page using helper render func
+	app.render(w, r, http.StatusOK, "view.tmpl", templateData{
+		Snippet: snippet,
+	})
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
