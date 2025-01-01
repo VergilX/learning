@@ -19,33 +19,33 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    for _, snippet := range snippets {
-        fmt.Fprintf(w, "%+v\n", snippet)
+	// files slice (base template should be *first*)
+	files := []string{
+		"./ui/html/base.tmpl",
+		"./ui/html/partials/nav.tmpl",
+		"./ui/html/pages/home.tmpl",
+	}
+
+	// ts: Template set
+	// takes files slice
+	// ... is used to pass slice elements as args
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, r, err) // helpers.go
+		return
+	}
+
+    data := templateData{
+        Snippets: snippets,
     }
 
-	// // files slice (base template should be *first*)
-	// files := []string{
-	// 	"./ui/html/base.tmpl",
-	// 	"./ui/html/pages/home.tmpl",
-	// 	"./ui/html/partials/nav.tmpl",
-	// }
-	//
-	// // ts: Template set
-	// // takes files slice
-	// // ... is used to pass slice elements as args
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.serverError(w, r, err) // helpers.go
-	// 	return
-	// }
-	//
-	// // Add template to http body
-	// // second arg: name of template ( {{define "base"}} )
-	// // last arg: dynamic data (nil for now)
-	// err = ts.ExecuteTemplate(w, "base", nil)
-	// if err != nil {
-	// 	app.serverError(w, r, err) // helpers.go
-	// }
+	// Add template to http body
+	// second arg: name of template ( {{define "base"}} )
+	// last arg: dynamic data (nil for now)
+	err = ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		app.serverError(w, r, err) // helpers.go
+	}
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
