@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+    "net/http"
+
+    "github.com/justinas/alice"
+)
 
 // update to return Handler. Doesn't break the code as Handler
 // also satisfies interface of ListenAndServe() in main.go
@@ -20,6 +24,9 @@ func (app *application) routes() http.Handler {
     mux.HandleFunc("GET /snippet/create", app.snippetCreate)
     mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
 
+    // chain middleware using imported package
+    standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
+
     // returns the servemux
-    return app.recoverPanic(app.logRequest(commonHeaders(mux)))
+    return standard.Then(mux)
 }
