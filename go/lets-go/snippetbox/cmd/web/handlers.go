@@ -54,20 +54,38 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Display a form for creating a new snippet..."))
+    data := app.newTemplateData(r)
+
+    app.render(w, r, http.StatusOK, "create.tmpl", data)
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
-	// Write http header
-	title := "0 snail"
-	content := "0 snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n- Kobayashi Issa"
-	expires := 7
+    // Limit size of request body to 4096 bytes
+    r.Body = http.MaxBytesReader(w, r.Body, 4096)
 
-	id, err := app.snippets.Insert(title, content, expires)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
+    // parses request body
+    err := r.ParseForm()
+    if err != nil {
+        app.clientError(w, "Bad Request", http.StatusBadRequest)
+        return
+    }
 
-	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
+    // extract form data
+    title := r.PostForm.Get("title")
+    content := r.PostForm.Get("content")
+
+    // number so use Atoi func too
+    expires, err := strconv.Atoi(r.PostForm.Get("expires"))
+    if err != nil {
+        app.clientError(w, http.StatusBadRequest)
+        return
+    }
+
+    id, err := app.snippets.Insert(title, content, expires)
+    if err != nil {
+        app.serverError(w, r, err)
+        return
+    }
+
+    http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 }
