@@ -74,35 +74,26 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 // in case of error
 // (titled on purpose)
 type snippetCreateForm struct {
-    Title       string
-    Content     string
-    Expires     int
-    validator.Validator
+//  var         type    decoder info
+    Title       string  `form: "title"`
+    Content     string  `form: "content"`
+    Expires     int     `form: "expires"`
+    validator.Validator `form: "-"`
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
     // Limit size of request body to 4096 bytes
     r.Body = http.MaxBytesReader(w, r.Body, 4096)
 
-    // parses request body
-    err := r.ParseForm()
+    // Use parser to parse the function
+    var form snippetCreateForm
+
+    // Use helper function from helpers.go 
+    // performs decoding using library and other stuff
+    err = decodePostForm(r, &form)
     if err != nil {
         app.clientError(w, http.StatusBadRequest)
         return
-    }
-
-    // number so use Atoi func too
-    // expires retrieved earlier (not in struct) for error detection
-    expires, err := strconv.Atoi(r.PostForm.Get("expires"))
-    if err != nil {
-        app.clientError(w, http.StatusBadRequest)
-        return
-    }
-
-    form := snippetCreateForm {
-        Title:          r.PostForm.Get("title"),
-        Content:        r.PostForm.Get("content"),
-        Expires:        expires,
     }
 
     // Validate data in form variable using imported Validator

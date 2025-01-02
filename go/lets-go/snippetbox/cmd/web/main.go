@@ -10,14 +10,16 @@ import (
 
 	"github.com/VergilX/learning/go/lets-go/snippetbox/internal/models"
 
+    "github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 // all dependencies of app (dependency injection)
 type application struct {
-	logger        *slog.Logger
-	snippets      *models.SnippetModel
-	templateCache map[string]*template.Template
+	logger          *slog.Logger
+	snippets        *models.SnippetModel
+	templateCache   map[string]*template.Template
+    formDecoder     *form.Decoder 
 }
 
 func main() {
@@ -50,11 +52,15 @@ func main() {
 		os.Exit(1)
 	}
 
+    // initalize form decoder instance
+    formDecoder := form.NewDecoder()
+
 	// application 'app' used for dependency injection
 	app := &application{
 		logger:        logger,
 		snippets:      &models.SnippetModel{DB: db},
 		templateCache: templateCache,
+        formDecoder:   formDecoder,
 	}
 
 	// retrieve routes from routes.go into servemux

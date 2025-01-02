@@ -2,11 +2,14 @@ package main
 
 import (
     "bytes"
+    "errors"
 	"fmt"
 	"log/slog"
 	"net/http"
     "runtime/debug"
     "time"
+
+    "github.com/go-playground/form/v4" 
 )
 
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
@@ -55,4 +58,14 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 
     // if executed without error, write to w
     buf.WriteTo(w)
+}
+
+func (app *application) decodePostForm(r *http.Request, dst any) error {
+    // parse request body
+    err := r.ParseForm()
+    if err != nil {
+        return err
+    }
+
+    // Use 
 }
