@@ -67,5 +67,22 @@ func (app *application) decodePostForm(r *http.Request, dst any) error {
         return err
     }
 
-    // Use 
+    // Use imported decoder (snippetCreateForm struct in handlers.go)
+    err = app.formDecoder.Decode(dst, r.PostForm)
+    if err != nil {
+        // here we implement the special case
+        // the decoder cannot have a nil form **and** this is a serious case
+        // so we need a panic
+        var invalidDecoderError *form.InvalidDecoderError
+
+        if errors.As(err, &invalidDecoderError) {
+            panic(err)
+        }
+
+        // all other cases, just have a bad request
+        return err
+    }
+
+    // no error scenario
+    return err
 }

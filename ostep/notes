@@ -1,0 +1,46 @@
+MOD 1: INTRO
+============
+
+Virtualizing CPU
+----------------
+- Makes it feel like it runs multiple programs at once
+  ./cpu A & ./cpu B & ./cpu C
+
+    Includes scheduling and resource management
+
+Virtualizing Memory 
+-------------------
+    API: 
+        operation(read/write)
+        address
+        data (for write)
+
+    - Result of experiment (mem.c)
+        - Each process has a virtual address
+        - Within that address space, randomization is enabled. 
+        - So even if two processes modify the same memory in their eyes, it's only virtual
+        - Processes are legally blind
+
+
+Concurrency
+-----------
+- Problems when many things run at once
+- A single instruction comprises of multiple assembly instructions
+- So while doing these operations on a common memory, it might cause issues
+- Because changes are not atomic
+
+
+Persistence
+-----------
+- Loss of data due to volatile memory
+- File system
+- Virtualization is only for CPU, memory but not for disk for each process
+- Processes share the data
+- But in main memory, there are methods for inter-process communication
+- Standard library gives high level code for device communication
+- Error: Journaling, copy-on-write
+
+
+Design Goals
+------------
+

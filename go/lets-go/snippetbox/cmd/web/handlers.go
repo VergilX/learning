@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-    "strings"
-    "unicode/utf8"
 
 	"github.com/VergilX/learning/go/lets-go/snippetbox/internal/models"
 	"github.com/VergilX/learning/go/lets-go/snippetbox/internal/validator"
@@ -90,7 +88,7 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 
     // Use helper function from helpers.go 
     // performs decoding using library and other stuff
-    err = decodePostForm(r, &form)
+    err := app.decodePostForm(r, &form)
     if err != nil {
         app.clientError(w, http.StatusBadRequest)
         return

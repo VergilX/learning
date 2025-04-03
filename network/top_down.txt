@@ -1,0 +1,59 @@
+CHAPTER 1
+=========
+
+Network of Networks
+-------------------
+
+- Network 4:
+    - peer
+    - IXP
+
+- Network 5 (nearest approx of today's internet)
+    - content provider networks (eg: Google)
+    - Tries to by-pass Tier-1 
+
+Today's Internet:
+    - Dozen Tier1: AT&T, Sprint, etc
+
+
+Delay, Loss and Throughput
+--------------------------
+
+Types of Delay:
+    - Processing delay
+    - Queuing delay
+    - Transmission delay
+    - Propogation delay
+
+    - Transmission vs Propogation delay:
+        - Analogy: 10-car caravan
+
+
+Queuing Delay and Packet Loss
+-----------------------------
+    - Traffic intensity: La/R
+    - Thumb Rule: Design a system which has traffic intensity not >1
+    - Dependence of Average queuing delay on La/R
+    - Packet Loss
+
+
+End-to-End Delay
+----------------
+    - Traceroute algorithm
+    - Queuing time of nth router can be greater than (n+1)th router
+    - Throughput: Rate at which destination host is receiving the file
+    - Bottleneck link in throughput
+
+
+Networks Under Attack
+---------------------
+    - Botnet
+    - Malware: Virus, Worm, Trojan
+    - DoS, DDoS
+    - Packet sniffing (WireShark, Scapy)
+    - IP Spoofing
+
+########################################################################################################################################################################################################
+
+CHAPTER 2
+=========
