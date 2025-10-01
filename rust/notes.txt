@@ -1,0 +1,16 @@
+Rust features:
+- Ahead of time compiled language
+
+###############################################################################################
+
+Rust Build System: Cargo
+- manages all rust dependencies
+- 
+
+Cargo commands:
+
+cargo new <project>     : Creates new project directory with starter kit
+cargo build             : Compiles ./src and stores exec in ./target/debug
+cargo run               : Does same as build but executes automatically
+cargo check             : Checks code but doesn't produce exec. Way faster
+cargo build --release   : Only used for PRODUCTION. Optimized. Higher compile time
